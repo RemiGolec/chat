@@ -34,61 +34,62 @@ export default class Start extends React.Component {
                     source={BackgroundImage}
                     resizeMode="cover"
                     style={styles.backgroundImage}
-                />
-                <View style={styles.titleBox}>
-                    <Text style={styles.title}>Chat App</Text>
-                </View>
-                <View style={styles.box}>
-                    <TextInput
-                        style={styles.inputBox}
-                        onChangeText={(name) => this.setState({ name })}
-                        placeholder="Hey, what's your name?"
-                    />
-
-                    <Text>
-                        Choose Background Color:
-                    </Text>
-                    <View style={styles.colorsBox}>
-                        <TouchableOpacity
-                            style={styles.color1}
-                            onPress={() => this.changeBgColor(this.colors.black)}
-                        >
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.color2}
-                            onPress={() => this.changeBgColor(this.colors.purple)}
-                        >
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.color3}
-                            onPress={() => this.changeBgColor(this.colors.grey)}
-                        >
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.color4}
-                            onPress={() => this.changeBgColor(this.colors.green)}
-                        >
-                        </TouchableOpacity>
+                >
+                    <View style={styles.titleBox}>
+                        <Text style={styles.title}>Chat App</Text>
                     </View>
-                    <Pressable
-                        style={styles.button}
-                        onPress={() =>
-                            this.props.navigation.navigate("Chat", {
-                                name: this.state.name,
-                                bgColor: this.state.bgColor,
-                            })
-                        }
-                    >
-                        <Text style={styles.buttonText}>
-                            Start Chatting
+                    <View style={styles.box}>
+                        <TextInput
+                            style={styles.inputBox}
+                            onChangeText={(name) => this.setState({ name })}
+                            placeholder="Hey, what's your name?"
+                        />
+
+                        <Text>
+                            Choose Background Color:
                         </Text>
-                    </Pressable>
-                    {/* <Button
+                        <View style={styles.colorsBox}>
+                            <TouchableOpacity
+                                style={styles.color1}
+                                onPress={() => this.changeBgColor(this.colors.black)}
+                            >
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.color2}
+                                onPress={() => this.changeBgColor(this.colors.purple)}
+                            >
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.color3}
+                                onPress={() => this.changeBgColor(this.colors.grey)}
+                            >
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.color4}
+                                onPress={() => this.changeBgColor(this.colors.green)}
+                            >
+                            </TouchableOpacity>
+                        </View>
+                        <Pressable
+                            style={styles.button}
+                            onPress={() =>
+                                this.props.navigation.navigate("Chat", {
+                                    name: this.state.name,
+                                    bgColor: this.state.bgColor,
+                                })
+                            }
+                        >
+                            <Text style={styles.buttonText}>
+                                Start Chatting
+                            </Text>
+                        </Pressable>
+                        {/* <Button
 
                         title="Start Chatting"
                         onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name })}
                     /> */}
-                </View>
+                    </View>
+                </ImageBackground>
             </View>
         )
     }
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 45,
         fontWeight: '600',
-        color: '#000000',
+        color: '#ffffff',
         marginTop: '25%'
     },
     // UI box
