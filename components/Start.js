@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Button, TextInput, ImageBackground, TouchableOpacity, Pressable } from 'react-native';
 
+
 import BackgroundImage from "../assets/BackgroundImage.png";
 
 export default class Start extends React.Component {
@@ -83,11 +84,6 @@ export default class Start extends React.Component {
                                 Start Chatting
                             </Text>
                         </Pressable>
-                        {/* <Button
-
-                        title="Start Chatting"
-                        onPress={() => this.props.navigation.navigate('Chat', { name: this.state.name })}
-                    /> */}
                     </View>
                 </ImageBackground>
             </View>
