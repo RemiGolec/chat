@@ -15,8 +15,15 @@ export default class Chat extends React.Component {
         super();
         this.state = {
             messages: [],
+            uid: 0,
+            user: {
+                _id: '',
+                name: '',
+                avatar: '',
+            },
         }
 
+        // SDK from Firestore
         const firebaseConfig = {
             apiKey: "AIzaSyBJ5QFzagZrNeYFvAS15k7-Rody_7iYGVQ",
             authDomain: "chat-app-9b1e8.firebaseapp.com",
@@ -27,16 +34,26 @@ export default class Chat extends React.Component {
             measurementId: "G-7VT2GN5KP4"
         };
 
+        // initializes the Firestore app
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
+        // references the collection to query its documents
+        this.referenceChatMessages = firebase
+            .firestore()
+            .collection('messages');
 
     }
 
 
     componentDidMount() {
         let name = this.props.route.params.name;
+
+        this.referenceChatMessages = firebase
+            .firestore()
+            .collection('messages');
+
         this.setState({
             messages: [
                 {
