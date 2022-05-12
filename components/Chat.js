@@ -54,6 +54,8 @@ export default class Chat extends React.Component {
             .firestore()
             .collection('messages');
 
+        this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
+
         this.setState({
             messages: [
                 {
@@ -74,6 +76,10 @@ export default class Chat extends React.Component {
                 }
             ],
         })
+    }
+
+    componentWilUnmount() {
+        this.unsubscribe();
     }
 
     onSend(messages = []) {
@@ -113,7 +119,9 @@ export default class Chat extends React.Component {
                     messages={this.state.messages}
                     onSend={messages => this.onSend(messages)}
                     user={{
-                        _id: 1,
+                        _id: this.state.user._id,
+                        name: this.state.name,
+                        avatar: this.state.user.avatar,
                     }}
                 />
                 {/* KeyboardAvoidingView fixes some Android phones error (hiding input window)*/}
