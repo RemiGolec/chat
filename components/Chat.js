@@ -56,6 +56,19 @@ export default class Chat extends React.Component {
 
         this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
 
+        // check whether the user is signed in. If not, create a new user.
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                await firebase.auth().signInAnonymously();
+            }
+
+            //update user state with currently active user data
+            this.setState({
+                uid: user.uid,
+                loggedInText: 'Hello there',
+            });
+        });
+
         this.setState({
             messages: [
                 {
@@ -75,7 +88,7 @@ export default class Chat extends React.Component {
                     system: true,
                 }
             ],
-        })
+        });
     }
 
     componentWilUnmount() {
