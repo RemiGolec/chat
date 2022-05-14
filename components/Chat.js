@@ -62,6 +62,7 @@ export default class Chat extends React.Component {
                     avatar: "https://placeimg.com/140/140/any",
                 },
             });
+            // listens for updates in the collection
             this.unsubscribe = this.referenceChatMessages
                 .orderBy("createdAt", "desc")
                 .onSnapshot(this.onCollectionUpdate);
@@ -75,6 +76,17 @@ export default class Chat extends React.Component {
 
     componentWillUnmount() {
         this.unsubscribe();
+        this.authUnsubscribe();
+    }
+
+    // appends the new message a user just sent to the state messages so it can be displayed in chat
+    onSend(messages = []) {
+        this.setState(previousState => ({
+            messages: GiftedChat.append(previousState.messages, messages),
+        }), () => {
+            this.addMessages();
+            this.saveMessages();
+        });
     }
 
     onCollectionUpdate = (querySnapshot) => {
@@ -106,16 +118,6 @@ export default class Chat extends React.Component {
             text: message.text || "",
             createdAt: message.createdAt,
             user: this.state.user,
-        });
-    }
-
-    // appends the new message a user just sent to the state messages so it can be displayed in chat
-    onSend(messages = []) {
-        this.setState(previousState => ({
-            messages: GiftedChat.append(previousState.messages, messages),
-        }), () => {
-            this.addMessages();
-            this.saveMessages();
         });
     }
 
