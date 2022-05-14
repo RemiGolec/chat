@@ -162,19 +162,6 @@ export default class Chat extends React.Component {
                 {Platform.OS === 'android' ?
                     <KeyboardAvoidingView behavior='height' /> : null
                 }
-                {/* example of accessibility code in action button:
-                    <TouchableOpacity
-                        accessible={true}
-                        accessibilityLabel="More options"
-                        accessibilityHint="Lets you choose to send an image or your geolocation."
-                        accessibilityRole="button"
-                        onPress={this._onPress}>
-                        <View style={styles.button}>
-                        ...
-                        </View>
-                        </TouchableOpacity>
-                */}
-
             </View>
         );
     };
