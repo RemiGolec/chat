@@ -11,28 +11,29 @@ import {
 const firebase = require('firebase');
 require('firebase/firestore');
 
+const firebaseConfig = {
+    apiKey: "AIzaSyBJ5QFzagZrNeYFvAS15k7-Rody_7iYGVQ",
+    authDomain: "chat-app-9b1e8.firebaseapp.com",
+    projectId: "chat-app-9b1e8",
+    storageBucket: "chat-app-9b1e8.appspot.com",
+    messagingSenderId: "421401197687",
+    appId: "1:421401197687:web:bdf9eb7ed86605a9c09a72",
+    measurementId: "G-7VT2GN5KP4"
+};
+
 
 export default class Chat extends React.Component {
     constructor() {
         super();
         this.state = {
             messages: [],
+            uid: 0,
             user: {
                 _id: "",
                 name: "",
                 avatar: "",
             },
         }
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBJ5QFzagZrNeYFvAS15k7-Rody_7iYGVQ",
-            authDomain: "chat-app-9b1e8.firebaseapp.com",
-            projectId: "chat-app-9b1e8",
-            storageBucket: "chat-app-9b1e8.appspot.com",
-            messagingSenderId: "421401197687",
-            appId: "1:421401197687:web:bdf9eb7ed86605a9c09a72",
-            measurementId: "G-7VT2GN5KP4"
-        };
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -45,28 +46,31 @@ export default class Chat extends React.Component {
 
     componentDidMount() {
         let name = this.props.route.params.name;
+        this.props.navigation.setOptions({ title: name });
         this.referenceChatMessages = firebase.firestore().collection("messages");
         this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
-        this.setState({
-            messages: [
-                {
-                    _id: 1,
-                    text: `Hello ${name}`,
-                    createdAt: new Date(),
-                    user: {
-                        _id: 2,
-                        name: 'React Native',
-                        avatar: 'https://placeimg.com/140/140/any',
-                    },
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                firebase.auth().signInAnonymously();
+            }
+            this.setState({
+                uid: user.uid,
+                messages: [],
+                user: {
+                    _id: user.uid,
+                    name: name,
+                    avatar: "https://placeimg.com/140/140/any",
                 },
-                {
-                    _id: 3,
-                    text: `Welcome to the chat ${name}`,
-                    createtAt: new Date(),
-                    system: true,
-                }
-            ],
-        })
+            });
+            this.unsubscribe = this.referenceChatMessages
+                .orderBy("createdAt", "desc")
+                .onSnapshot(this.onCollectionUpdate);
+            // create a reference to the active user's documents (shopping lists)
+            this.referenceShoppinglistUser = firebase
+                .firestore()
+                .collection('messages')
+                .where("uid", "==", this.state.uid);
+        });
     }
 
     componentWillUnmount() {
@@ -83,25 +87,26 @@ export default class Chat extends React.Component {
                 _id: data._id,
                 text: data.text,
                 createdAt: data.createdAt.toDate(),
-                user: data.user,
+                user: {
+                    _id: data.user._id,
+                    name: data.user.name,
+                    avatar: data.user.avatar,
+                },
             });
         });
         this.setState({
-            messages,
+            messages: messages,
         });
     };
 
     addMessages() {
         const message = this.state.messages[0];
         this.referenceChatMessages.add({
+            uid: this.state.uid,
             _id: message._id,
             text: message.text || "",
             createdAt: message.createdAt,
-            user: {
-                _id: 3,
-                name: 'random name',
-                avatar: 'https://placeimg.com/140/140/any',
-            },
+            user: this.state.user,
         });
     }
 
