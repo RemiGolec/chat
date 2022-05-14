@@ -49,9 +49,9 @@ export default class Chat extends React.Component {
         this.props.navigation.setOptions({ title: name });
         this.referenceChatMessages = firebase.firestore().collection("messages");
         this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
             if (!user) {
-                firebase.auth().signInAnonymously();
+                await firebase.auth().signInAnonymously();
             }
             this.setState({
                 uid: user.uid,
@@ -102,7 +102,6 @@ export default class Chat extends React.Component {
     addMessages() {
         const message = this.state.messages[0];
         this.referenceChatMessages.add({
-            uid: this.state.uid,
             _id: message._id,
             text: message.text || "",
             createdAt: message.createdAt,
@@ -120,11 +119,6 @@ export default class Chat extends React.Component {
         });
     }
 
-    onSend(messages = []) {
-        this.setState(previousState => ({
-            messages: GiftedChat.append(previousState.messages, messages),
-        }))
-    }
     // ------------  Styles the text bubble 
     renderBubble(props) {
         return (
