@@ -8,17 +8,45 @@ import {
 } from 'react-native';
 
 
+const firebase = require('firebase');
+require('firebase/firestore');
+
 
 export default class Chat extends React.Component {
     constructor() {
         super();
         this.state = {
             messages: [],
+            user: {
+                _id: "",
+                name: "",
+                avatar: "",
+            },
         }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ5QFzagZrNeYFvAS15k7-Rody_7iYGVQ",
+            authDomain: "chat-app-9b1e8.firebaseapp.com",
+            projectId: "chat-app-9b1e8",
+            storageBucket: "chat-app-9b1e8.appspot.com",
+            messagingSenderId: "421401197687",
+            appId: "1:421401197687:web:bdf9eb7ed86605a9c09a72",
+            measurementId: "G-7VT2GN5KP4"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        this.referenceChatMessages = firebase.firestore().collection("messages");
+
+
     }
 
     componentDidMount() {
         let name = this.props.route.params.name;
+        this.referenceChatMessages = firebase.firestore().collection("messages");
+        this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
         this.setState({
             messages: [
                 {
@@ -32,13 +60,59 @@ export default class Chat extends React.Component {
                     },
                 },
                 {
-                    _id: 2,
+                    _id: 3,
                     text: `Welcome to the chat ${name}`,
                     createtAt: new Date(),
                     system: true,
                 }
             ],
         })
+    }
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
+
+    onCollectionUpdate = (querySnapshot) => {
+        const messages = [];
+        // go through each document
+        querySnapshot.forEach((doc) => {
+            // get the QueryDocumentSnapshot's data
+            let data = doc.data();
+            messages.push({
+                _id: data._id,
+                text: data.text,
+                createdAt: data.createdAt.toDate(),
+                user: data.user,
+            });
+        });
+        this.setState({
+            messages,
+        });
+    };
+
+    addMessages() {
+        const message = this.state.messages[0];
+        this.referenceChatMessages.add({
+            _id: message._id,
+            text: message.text || "",
+            createdAt: message.createdAt,
+            user: {
+                _id: 3,
+                name: 'random name',
+                avatar: 'https://placeimg.com/140/140/any',
+            },
+        });
+    }
+
+    // appends the new message a user just sent to the state messages so it can be displayed in chat
+    onSend(messages = []) {
+        this.setState(previousState => ({
+            messages: GiftedChat.append(previousState.messages, messages),
+        }), () => {
+            this.addMessages();
+            this.saveMessages();
+        });
     }
 
     onSend(messages = []) {
@@ -78,7 +152,9 @@ export default class Chat extends React.Component {
                     messages={this.state.messages}
                     onSend={messages => this.onSend(messages)}
                     user={{
-                        _id: 1,
+                        _id: this.state.user._id,
+                        name: this.state.name,
+                        avatar: this.state.user.avatar
                     }}
                 />
                 {/* KeyboardAvoidingView fixes some Android phones error (hiding input window)*/}
