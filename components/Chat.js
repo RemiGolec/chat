@@ -85,7 +85,6 @@ export default class Chat extends React.Component {
             messages: GiftedChat.append(previousState.messages, messages),
         }), () => {
             this.addMessages();
-            this.saveMessages();
         });
     }
 
@@ -100,11 +99,11 @@ export default class Chat extends React.Component {
                 text: data.text,
                 createdAt: data.createdAt.toDate(),
                 // -------  code below causing app to crash
-                // user: {
-                // _id: data.user._id,
-                // name: data.user.name,
-                // avatar: data.user.avatar,
-                // },
+                user: {
+                    _id: data.user._id,
+                    name: data.user.name,
+                    avatar: data.user.avatar,
+                },
             });
         });
         this.setState({
@@ -129,7 +128,12 @@ export default class Chat extends React.Component {
                 {...props}
                 wrapperStyle={{
                     right: {
-                        backgroundColor: '#884dff'
+                        backgroundColor: '#ffda79',
+                        color: '#000'
+                    },
+                    left: {
+                        backgroundColor: '#f7f1e3',
+                        color: '#000'
                     }
                 }}
             />
@@ -151,7 +155,7 @@ export default class Chat extends React.Component {
             }}>
                 <GiftedChat
                     renderBubble={this.renderBubble.bind(this)}
-                    messages={this.state.messages}
+                    messages={this.state.messages.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))}
                     onSend={messages => this.onSend(messages)}
                     user={{
                         _id: this.state.user._id,
