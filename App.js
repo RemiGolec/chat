@@ -7,7 +7,7 @@ import Start from './components/Start';
 import Chat from './components/Chat';
 
 const Stack = createStackNavigator();
-
+// trying to reverse the commits after problems with async-storage installation
 export default class App extends React.Component {
   render() {
     return (
