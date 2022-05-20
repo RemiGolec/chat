@@ -198,6 +198,7 @@ export default class Chat extends React.Component {
         )
     }
 
+    // renderInputToolbar comes from GiftedChat
     renderInputToolbar(props) {
         if (this.state.isConnected == false) {
         } else {
