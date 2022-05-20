@@ -12,18 +12,6 @@ import NetInfo from '@react-native-community/netinfo';
 const firebase = require('firebase');
 require('firebase/firestore');
 
-//configurations to allow this app to connect to Cloud Firestore database
-const firebaseConfig = {
-    apiKey: "AIzaSyBJ5QFzagZrNeYFvAS15k7-Rody_7iYGVQ",
-    authDomain: "chat-app-9b1e8.firebaseapp.com",
-    projectId: "chat-app-9b1e8",
-    storageBucket: "chat-app-9b1e8.appspot.com",
-    messagingSenderId: "421401197687",
-    appId: "1:421401197687:web:bdf9eb7ed86605a9c09a72",
-    measurementId: "G-7VT2GN5KP4"
-};
-
-
 export default class Chat extends React.Component {
     constructor() {
         super();
@@ -38,11 +26,25 @@ export default class Chat extends React.Component {
             isConnected: false,
         }
 
+        //configurations to allow this app to connect to Cloud Firestore database
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ5QFzagZrNeYFvAS15k7-Rody_7iYGVQ",
+            authDomain: "chat-app-9b1e8.firebaseapp.com",
+            projectId: "chat-app-9b1e8",
+            storageBucket: "chat-app-9b1e8.appspot.com",
+            messagingSenderId: "421401197687",
+            appId: "1:421401197687:web:bdf9eb7ed86605a9c09a72",
+            measurementId: "G-7VT2GN5KP4"
+        };
+
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
-        this.referenceChatMessages = firebase.firestore().collection("messages");
+        this.referenceChatMessages = firebase
+            .firestore()
+            .collection("messages");
+        this.referenceUserMessages = null;
     }
 
     // OFFLINE: Create functions to display messages when user is offline
@@ -116,7 +118,7 @@ export default class Chat extends React.Component {
                         .orderBy("createdAt", "desc")
                         .onSnapshot(this.onCollectionUpdate);
                     // create a reference to the active user's documents (shopping lists)
-                    this.referenceShoppinglistUser = firebase
+                    this.referenceUserMessages = firebase
                         .firestore()
                         .collection('messages')
                         .where("uid", "==", this.state.uid);
@@ -166,6 +168,8 @@ export default class Chat extends React.Component {
         this.setState({
             messages: messages,
         });
+
+        this.saveMessages();
     };
 
     addMessages() {
