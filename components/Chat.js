@@ -35,6 +35,7 @@ export default class Chat extends React.Component {
                 name: "",
                 avatar: "",
             },
+            isConnected: false,
         }
 
         if (!firebase.apps.length) {
@@ -87,44 +88,47 @@ export default class Chat extends React.Component {
         NetInfo.fetch().then(connection => {
             if (connection.isConnected) {
                 console.log('online');
+                this.setState({ isConnected: true });
+
+                // create a reference to the active user's messages
+                this.referenceChatMessages = firebase.firestore().collection("messages");
+
+                // listens for updates in the collection
+                this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
+
+                // user can sign in anonimously
+                this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+                    if (!user) {
+                        await firebase.auth().signInAnonymously();
+                    }
+                    //update user state with currently active user data
+                    this.setState({
+                        uid: user.uid,
+                        messages: [],
+                        user: {
+                            _id: user.uid,
+                            name: name,
+                            avatar: "https://placeimg.com/140/140/any",
+                        },
+                    });
+                    // listens for updates in the collection
+                    this.unsubscribe = this.referenceChatMessages
+                        .orderBy("createdAt", "desc")
+                        .onSnapshot(this.onCollectionUpdate);
+                    // create a reference to the active user's documents (shopping lists)
+                    this.referenceShoppinglistUser = firebase
+                        .firestore()
+                        .collection('messages')
+                        .where("uid", "==", this.state.uid);
+                });
+                // save messages when online
+                this.saveMessages();
             } else {
                 console.log('offline');
+                this.setState({ isConnected: false });
+                this.getMessages();
             }
         });
-
-        // create a reference to the active user's messages
-        this.referenceChatMessages = firebase.firestore().collection("messages");
-
-        // listens for updates in the collection
-        this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
-
-        // user can sign in anonimously
-        this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-            if (!user) {
-                await firebase.auth().signInAnonymously();
-            }
-            //update user state with currently active user data
-            this.setState({
-                uid: user.uid,
-                messages: [],
-                user: {
-                    _id: user.uid,
-                    name: name,
-                    avatar: "https://placeimg.com/140/140/any",
-                },
-            });
-            // listens for updates in the collection
-            this.unsubscribe = this.referenceChatMessages
-                .orderBy("createdAt", "desc")
-                .onSnapshot(this.onCollectionUpdate);
-            // create a reference to the active user's documents (shopping lists)
-            this.referenceShoppinglistUser = firebase
-                .firestore()
-                .collection('messages')
-                .where("uid", "==", this.state.uid);
-        });
-        // save messages when online
-        this.saveMessages();
     }
 
     componentWillUnmount() {
@@ -137,6 +141,7 @@ export default class Chat extends React.Component {
         this.setState(previousState => ({
             messages: GiftedChat.append(previousState.messages, messages),
         }), () => {
+            this.addMessages();
             this.saveMessages();
         });
     }
@@ -165,6 +170,7 @@ export default class Chat extends React.Component {
 
     addMessages() {
         const message = this.state.messages[0];
+        console.log('message:', message)
         this.referenceChatMessages.add({
             _id: message._id,
             text: message.text || "",
