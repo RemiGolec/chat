@@ -6,8 +6,16 @@ import PropTypes from 'prop-types';
 
 export default class CustomActions extends React.Component {
 
+    // ------------------------- pick an image from library
     pickImage = () => { }
 
+    //-------------------------- take a photo
+    takePicture = () => { }
+
+    // ------------------------- send location
+    sendLocation = () => { }
+
+    // ------------------------- the Action selector button
     onActionPress = () => {
         const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
         const cancelButtonIndex = options.length - 1;
