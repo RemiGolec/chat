@@ -246,6 +246,8 @@ export default class Chat extends React.Component {
         return <CustomActions {...props} />;
     }
 
+
+
     render() {
         let name = this.props.route.params.name;
         this.props.navigation.setOptions({ title: name });
@@ -263,6 +265,7 @@ export default class Chat extends React.Component {
                     renderBubble={this.renderBubble.bind(this)}
                     renderInputToolbar={this.renderInputToolbar.bind(this)}
                     renderActions={this.renderCustomActions}
+                    renderCustomView={this.renderCustomView}
                     messages={this.state.messages.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))}
                     onSend={messages => this.onSend(messages)}
                     user={{

@@ -121,7 +121,7 @@ export default class CustomActions extends Component {
 
         const snapshot = await ref.put(blob);
 
-        blob.close();
+        // blob.close();
 
         return await snapshot.ref.getDownloadURL();
     };
@@ -164,7 +164,7 @@ export default class CustomActions extends Component {
             <TouchableOpacity
                 accessible={true}
                 accessibilityLabel="More options"
-                accessibilityHint="Let’s you choose to send an image or your geolocation."
+                accessibilityHint="Let\'s you choose to send an image or your geolocation."
                 style={[styles.container]}
                 onPress={this.onActionPress}
             >
