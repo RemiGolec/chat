@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Button, TextInput, ImageBackground, TouchableOpacity, Pressable } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, Pressable } from 'react-native';
 
 
 import BackgroundImage from "../assets/BackgroundImage.png";
