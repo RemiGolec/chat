@@ -1,4 +1,4 @@
-# chat
+# Chat
 
 The app provides users with a chat interface and options to share images and their location.
 App written in react-native.
@@ -10,7 +10,7 @@ React Native
 Expo
 Navigator
 
-Get Started
+## Get Started
 Clone the project https://github.com/RemiGolec/chat.git
 
 Open your terminal
@@ -18,7 +18,7 @@ cd to the project diretory
 $npm install
 After instalation, in order to run type on the same directory $expo start
 
-User Stories
+## User Stories
 
 As a new user, I want to be able to easily enter a chat room so I can quickly start talking to my friends and family.
 
